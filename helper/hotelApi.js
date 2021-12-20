@@ -19,43 +19,39 @@
 const config = require("./../config")();
 const axios = require("axios").default;
 
-const getDestinationId = (cityName) => {
-    console.log("inside getDestinationId city is "+ cityName)
-    let options = {
-        method: 'GET',
-        url: 'https://hotels4.p.rapidapi.com/locations/v2/search',
-        params: {query: cityName, locale: 'en_US', currency: 'USD'},
-        headers: {
-          'x-rapidapi-host': 'hotels4.p.rapidapi.com',
-          'x-rapidapi-key': config.key
-        }
-      };
-    
-      let res = null;
-    axios.request(options).then(function (response) {
-        console.log('just before returning response')
-        let destinationId = response.data.suggestions[0].entities[0].destinationId
-        console.log('destination id for city is ' + destinationId )
-        res = response;
-        console.log('#############')
-        console.log('res is '+res)
-    }).catch(function (error) {
-        console.error(error);
-        res = null;
-    });
+function getDestinationId(cityName){
+  console.log("inside getDestinationId city is " + cityName)
+  let options = {
+    method: 'GET',
+    url: 'https://hotels4.p.rapidapi.com/locations/v2/search',
+    params: { query: cityName, locale: 'en_US', currency: 'USD' },
+    headers: {
+      'x-rapidapi-host': 'hotels4.p.rapidapi.com',
+      'x-rapidapi-key': config.key
+    }
+  };
 
-    return {"response":res};
+  return axios.request(options).then(function (response) {
+
+    let destinationId = response.data.suggestions[0].entities[0].destinationId
+    console.log('destination id for city is ' + destinationId)
+    
+    return response;
+  }).catch(function (error) {
+    console.log("inside error ")
+    console.error(error);
+    return null;
+  });
 }
 
-
-module.exports = getDestinationId;
+module.exports =  {getDestinationId} ;
 
 
 
 
 // /**
 //  * Authorization (basic auth) for dialogflow fulfillment request
-//  * @param {object} req http request 
+//  * @param {object} req http request
 //  * @param {object} res http response
 //  * @param {function} next invokes the succeeding middleware/function
 //  */

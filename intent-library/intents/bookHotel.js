@@ -16,22 +16,29 @@
 
  "use strict";
 
- const getDestinationId = require("../../helper/hotelApi")
+ const hotelApi = require("../../helper/hotelApi")
+
+ console.log(hotelApi);
  
  const bookHotelIntent = async (df) =>{
-    console.log("===============================================")
-    console.log(df._request.queryResult)
-    console.log("===============================================")
 
     console.log('given city is '+ df._request.queryResult.parameters.city);
 
-    let response = await getDestinationId(df._request.queryResult.parameters.city);
-    console.log('response from helper '+ response.response)
+    let response = await hotelApi.getDestinationId(df._request.queryResult.parameters.city);
+    
+    console.log('response from helper '+ response)
 
     if(response){
         let destinationId = response.data.suggestions[0].entities[0].destinationId
         console.log('destination id for city is ' + destinationId )
-         
+        // df.setOutputContext('nextSteps', 5, {
+        //     'destinationId':destinationId,
+        //     ...df._request.queryResult.parameters
+        // })
+        df.setEvent('nextStepsEvent', "en-US", {
+            'destinationId':destinationId,
+            ...df._request.queryResult.parameters
+        })
         df.setResponseText("adsfasdasldngasn");
     }else{
         df.setResponseText("There wwas some error in fetching.");
