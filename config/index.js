@@ -47,7 +47,8 @@ const loadConfig = () => {
         "logger": {
             "piiFields": []
         },
-        "db":db
+        "db":db,
+        "key":process.env.KEY
     };
 };
 
