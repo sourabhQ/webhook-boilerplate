@@ -27,20 +27,24 @@ const getDestinationId = (cityName) => {
         params: {query: cityName, locale: 'en_US', currency: 'USD'},
         headers: {
           'x-rapidapi-host': 'hotels4.p.rapidapi.com',
-          'x-rapidapi-key': '3cf2fc45abmshe6ae3494a82c830p1fda53jsna8c9f7674646'
+          'x-rapidapi-key': config.key
         }
       };
     
       let res = null;
     axios.request(options).then(function (response) {
         console.log('just before returning response')
+        let destinationId = response.data.suggestions[0].entities[0].destinationId
+        console.log('destination id for city is ' + destinationId )
         res = response;
+        console.log('#############')
+        console.log('res is '+res)
     }).catch(function (error) {
         console.error(error);
         res = null;
     });
 
-    return res;
+    return {"response":res};
 }
 
 
