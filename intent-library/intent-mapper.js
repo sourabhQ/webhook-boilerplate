@@ -21,7 +21,10 @@
  */
 
 const intents = {
-    "Default Welcome Intent": require("./intents/default-welcome-intent")
+    "Default Welcome Intent": require("./intents/default-welcome-intent"),
+    "Default Fallback Intent": require("./intents/default-fallback-intent"),
+    "BookHotel": require("./intents/bookHotel")
+
 };
 
 module.exports = intents;

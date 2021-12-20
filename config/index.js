@@ -20,21 +20,34 @@
  * Configures the application based on the NODE_ENV eg: "production, qa and develop"
  * return application configurations   
  */
+ const dotenv = require('dotenv');
+ dotenv.config();
+
+const admin = require("firebase-admin");
+
+const serviceAccount = require("../../hotel-335214-firebase-adminsdk-mnkjw-1e14681739.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
+
+const db = admin.firestore();
 
 const loadConfig = () => {
     return {
-        "port": process.env.PORT || 3000,
+        "port": process.env.PORT || 8080,
         "fullfillmentConfig": {
-            "platformsEnabled": ["TEXT", "ACTIONS_ON_GOOGLE"]
+            "platformsEnabled": ["TEXT", "TELEPHONY"]
         },
         "auth": {
-            "enable": false,
-            "username": process.env.USER_NAME,
-            "password": process.env.PASSWORD
+            "enable": true,
+            "username": process.env.USER_NAME || "Test123",
+            "password": process.env.PASSWORD || "12345678"
         },
         "logger": {
             "piiFields": []
-        }
+        },
+        "db":db
     };
 };
 

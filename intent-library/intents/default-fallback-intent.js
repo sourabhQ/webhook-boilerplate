@@ -21,9 +21,9 @@
  * @param {object} df webhook fulfillment object
  */
 
-const defaultWelcomeIntent = async (df) =>{
+const defaultFallbackIntent = async (df) =>{
     
-    df.setResponseText("Hi, Welcome to Q-Hotel Booking bot. I am Lara, your virtual assistant! How may I help you with your reservation?");
+    df.setResponseText("I'm sorry I didn't get it. Could you please rephrase.");
 };
 
-module.exports = defaultWelcomeIntent;
+module.exports = defaultFallbackIntent;
