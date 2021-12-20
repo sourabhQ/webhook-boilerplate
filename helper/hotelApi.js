@@ -19,7 +19,7 @@
 const config = require("./../config")();
 const axios = require("axios").default;
 
-function getDestinationId(cityName){
+const getDestinationId = async (cityName) =>{
   console.log("inside getDestinationId city is " + cityName)
   let options = {
     method: 'GET',
@@ -31,43 +31,56 @@ function getDestinationId(cityName){
     }
   };
 
-  return axios.request(options).then(function (response) {
-
-    let destinationId = response.data.suggestions[0].entities[0].destinationId
-    console.log('destination id for city is ' + destinationId)
-    
+  let response = axios.request(options).then(function (response) {    
     return response;
   }).catch(function (error) {
     console.log("inside error ")
     console.error(error);
     return null;
   });
+
+  return response;
 }
 
-module.exports =  {getDestinationId} ;
 
+const getHotelDetails = async (destinationId, checkInDate, checkOutDate, budget) =>{
+  console.log("inside getDestinationId city is " + cityName)
+  let options = {
+    method: 'GET',
+    url: 'https://hotels4.p.rapidapi.com/locations/v2/search',
+    params: { 
+      destinationId: destinationId,
+      pageNumber: "1",
+      checkIn: checkInDate, //"2020-01-12", -------------> User's checkin date
+      checkOut: checkOutDate,
+      pageSize: "10",
+      adults1: "1",
+      currency: "USD",
+      priceMax: budget,
+      starRatings: "5",
+      locale: "en_US",
+      sortOrder: "PRICE_HIGHEST_FIRST"
 
+     },
+    headers: {
+      'x-rapidapi-host': 'hotels4.p.rapidapi.com',
+      'x-rapidapi-key': config.key
+    }
+  };
 
+  let response = axios.request(options).then(function (response) {    
+    console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+    console.log('hotel details api response ')
+    console.log(response)
+    console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+    return response;
+  }).catch(function (error) {
+    console.log("inside error ")
+    console.error(error);
+    return null;
+  });
 
-// /**
-//  * Authorization (basic auth) for dialogflow fulfillment request
-//  * @param {object} req http request
-//  * @param {object} res http response
-//  * @param {function} next invokes the succeeding middleware/function
-//  */
-//  const basicAuth = (req, res, next) => {
-//     const auth = req.get("authorization");
-//     if (req.path === "/healthcheck") {
-//         next();
-//     }
-//     else if (!auth) {
-//         res.status(401).send({ "status": 401, "message": "Unauthorized" });
-//     } else {
-//         const credentials = new Buffer.from(auth.split(" ").pop(), "base64").toString("ascii").split(":");
-//         if (credentials[0] === config.auth.username && credentials[1] === config.auth.password) {
-//             next();
-//         } else {
-//             res.status(401).send({ "status": 401, "message": "Unauthorized" });
-//         }
-//     }
-// };
+  return response;
+}
+
+module.exports =  {getDestinationId, getHotelDetails} ;

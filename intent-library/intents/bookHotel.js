@@ -17,10 +17,16 @@
  "use strict";
 
  const hotelApi = require("../../helper/hotelApi")
-
- console.log(hotelApi);
+ const {dateTimeConvert} = require("../../helper/dateTimeUtil")
  
  const bookHotelIntent = async (df) =>{
+
+    let providedDate = df._request.queryResult.parameters.providedDate
+    let nights = df._request.queryResult.parameters.nights
+
+    const {checkInDate, checkOutDate} = dateTimeConvert(providedDate, nights)
+    console.log("checkInDate is "+ checkInDate)
+    console.log("checkOutDate is "+ checkOutDate)
 
     console.log('given city is '+ df._request.queryResult.parameters.city);
 
@@ -31,12 +37,16 @@
     if(response){
         let destinationId = response.data.suggestions[0].entities[0].destinationId
         console.log('destination id for city is ' + destinationId )
-        // df.setOutputContext('nextSteps', 5, {
-        //     'destinationId':destinationId,
-        //     ...df._request.queryResult.parameters
-        // })
+        df.setOutputContext('nextSteps', 5, {
+            'destinationId':destinationId,
+            "checkInDate ": checkInDate, 
+            "checkOutDate ": checkOutDate,
+            ...df._request.queryResult.parameters
+        })
         df.setEvent('nextStepsEvent', "en-US", {
             'destinationId':destinationId,
+            "checkInDate ": checkInDate, 
+            "checkOutDate ": checkOutDate,
             ...df._request.queryResult.parameters
         })
         df.setResponseText("adsfasdasldngasn");
