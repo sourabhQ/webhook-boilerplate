@@ -19,37 +19,39 @@
  const hotelApi = require("../../helper/hotelApi")
  const {dateTimeConvert} = require("../../helper/dateTimeUtil")
  
- const bookHotelIntent = async (df) =>{
+ const bookHotelIntent = async (df, queryResult) =>{
 
-    let providedDate = df._request.queryResult.parameters.providedDate
-    let nights = df._request.queryResult.parameters.nights
+    let providedDate = queryResult.outputContexts[0].parameters.providedDate
+
+    console.log('providedDate city is '+ providedDate);
+    let nights = queryResult.outputContexts[0].parameters.nights
 
     const {checkInDate, checkOutDate} = dateTimeConvert(providedDate, nights)
     console.log("checkInDate is "+ checkInDate)
     console.log("checkOutDate is "+ checkOutDate)
 
-    console.log('given city is '+ df._request.queryResult.parameters.city);
+    console.log('given city is '+ queryResult.outputContexts[0].parameters.city);
 
-    let response = await hotelApi.getDestinationId(df._request.queryResult.parameters.city);
+    let response = await hotelApi.getDestinationId(queryResult.outputContexts[0].parameters.city);
     
     console.log('response from helper '+ response)
 
     if(response){
         let destinationId = response.data.suggestions[0].entities[0].destinationId
         console.log('destination id for city is ' + destinationId )
-        df.setOutputContext('nextSteps', 5, {
-            'destinationId':destinationId,
-            "checkInDate ": checkInDate, 
-            "checkOutDate ": checkOutDate,
-            ...df._request.queryResult.parameters
+        df.setOutputContext('nextsteps', 5, {
+            destinationId,
+            checkInDate, 
+            "checkOutDate": checkOutDate,
+            ...queryResult.outputContexts[0].parameters
         })
         df.setEvent('nextStepsEvent', "en-US", {
-            'destinationId':destinationId,
-            "checkInDate ": checkInDate, 
-            "checkOutDate ": checkOutDate,
-            ...df._request.queryResult.parameters
+            destinationId,
+            "checkInDate": checkInDate, 
+            checkOutDate,
+            ...queryResult.outputContexts[0].parameters
         })
-        df.setResponseText("adsfasdasldngasn");
+        //df.setResponseText("adsfasdasldngasn");
     }else{
         df.setResponseText("There wwas some error in fetching.");
     }

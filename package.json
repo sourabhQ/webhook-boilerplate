@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/Quantiphi/webhook-boilerplate#readme",
   "dependencies": {
+    "@google-cloud/firestore": "^5.0.1",
     "axios": "^0.24.0",
     "dialogflow-fulfillment": "Quantiphi/dialogflow-fulfillment-builder",
     "dialogflow-fulfillment-builder": "github:Quantiphi/dialogflow-fulfillment-builder",

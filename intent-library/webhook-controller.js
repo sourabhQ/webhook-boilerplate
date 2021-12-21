@@ -32,7 +32,7 @@ module.exports = async (req, res, next) => {
         const requestIntent = req.body.queryResult.intent.displayName;
         let fulfillment = new dialogflowFullfillment(config.fullfillmentConfig, req.body);
         if (intentMapper[requestIntent]) {
-            await intentMapper[requestIntent](fulfillment);
+            await intentMapper[requestIntent](fulfillment, req.body.queryResult);
         } else {
             const requiredIntent = getIntent(requestIntent);
             await require(requiredIntent)(fulfillment);
