@@ -40,13 +40,15 @@ const dateTimeConvert = (startDate, nights) => {
     );
     return {
         "checkInDate": longEnUSFormatter.formatToParts(checkInDate)
-        .map(extractValueAndCustomizeDayOfMonth)
-        .join(""),
-
+            .map(extractValueAndCustomizeDayOfMonth)
+            .join(""),
         "checkOutDate": longEnUSFormatter.formatToParts(checkOutDate)
-        .map(extractValueAndCustomizeDayOfMonth)
-        .join("")
+            .map(extractValueAndCustomizeDayOfMonth)
+            .join(""),
+        'apiCheckOutDate': checkOutDate.toISOString().split("T")[0],
+        'apiCheckInDate': checkInDate.toISOString().split("T")[0],
+
     }
 };
 
-module.exports = {dateTimeConvert};
+module.exports = { dateTimeConvert };

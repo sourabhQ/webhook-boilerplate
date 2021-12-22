@@ -14,49 +14,63 @@
  * limitations under the License.
  */
 
- "use strict";
+"use strict";
 
- const hotelApi = require("../../helper/hotelApi")
- const {dateTimeConvert} = require("../../helper/dateTimeUtil")
- 
- const bookHotelIntent = async (df, queryResult) =>{
+const hotelApi = require("../../helper/hotelApi")
+const { dateTimeConvert } = require("../../helper/dateTimeUtil")
+
+const bookHotelIntent = async (df, queryResult) => {
 
     let providedDate = queryResult.outputContexts[0].parameters.providedDate
-
-    console.log('providedDate city is '+ providedDate);
+    console.log('providedDate city is ' + providedDate);
     let nights = queryResult.outputContexts[0].parameters.nights
+    let city = queryResult.outputContexts[0].parameters.city
+    console.log(`given city is ${city}`);
+    let budget = queryResult.outputContexts[0].parameters.budget
+    console.log(`given city is ${budget}`);
 
-    const {checkInDate, checkOutDate} = dateTimeConvert(providedDate, nights)
-    console.log("checkInDate is "+ checkInDate)
-    console.log("checkOutDate is "+ checkOutDate)
+    const { checkInDate, checkOutDate, apiCheckInDate, apiCheckOutDate } = dateTimeConvert(providedDate, nights)
+    console.log("checkInDate is " + checkInDate)
+    console.log("checkOutDate is " + checkOutDate)
 
-    console.log('given city is '+ queryResult.outputContexts[0].parameters.city);
+    console.log("apiCheckInDate is " + apiCheckInDate)
+    console.log("apiCheckOutDate is " + apiCheckOutDate)
 
-    let response = await hotelApi.getDestinationId(queryResult.outputContexts[0].parameters.city);
-    
-    console.log('response from helper '+ response)
 
-    if(response){
+
+    let response = await hotelApi.getDestinationId(city);
+
+    console.log(`response from getDestinationId ${response}`)
+
+    if (response) {
         let destinationId = response.data.suggestions[0].entities[0].destinationId
-        console.log('destination id for city is ' + destinationId )
-        df.setOutputContext('nextsteps', 5, {
+        console.log('destination id for city is ' + destinationId)
+
+        let parameterObject = {
             destinationId,
-            checkInDate, 
-            "checkOutDate": checkOutDate,
-            ...queryResult.outputContexts[0].parameters
-        })
-        df.setEvent('nextStepsEvent', "en-US", {
-            destinationId,
-            "checkInDate": checkInDate, 
+            checkInDate,
             checkOutDate,
+            apiCheckInDate,
+            apiCheckOutDate,
             ...queryResult.outputContexts[0].parameters
-        })
-        //df.setResponseText("adsfasdasldngasn");
-    }else{
-        df.setResponseText("There wwas some error in fetching.");
+        }
+
+        let responseGetHotelDetails = await hotelApi.getHotelDetails(destinationId, apiCheckInDate, apiCheckOutDate, budget)
+        console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+        //console.log(responseGetHotelDetails)
+        console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+        console.log('hotel name is '+ responseGetHotelDetails.data.data.body.searchResults.results[0].name)
+        console.log('hotel price is '+ responseGetHotelDetails.data.data.body.searchResults.results[0].ratePlan.price.current
+        )
+        console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+        console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+
+        df.setOutputContext('nextsteps', 5, parameterObject)
+        df.setEvent('nextStepsEvent', "en-US", parameterObject)
+    } else {
+        df.setResponseText("There was some error in fetching.");
     }
-    
- };
- 
- module.exports = bookHotelIntent;
- 
+
+};
+
+module.exports = bookHotelIntent;

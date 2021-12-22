@@ -19,12 +19,12 @@
 const config = require("./../config")();
 const axios = require("axios").default;
 
-const getDestinationId = async (cityName) =>{
-  console.log("inside getDestinationId city is " + cityName)
+const getDestinationId = async (city) =>{
+  console.log("inside getDestinationId city is " + city)
   let options = {
     method: 'GET',
     url: 'https://hotels4.p.rapidapi.com/locations/v2/search',
-    params: { query: cityName, locale: 'en_US', currency: 'USD' },
+    params: { query: city, locale: 'en_US', currency: 'USD' },
     headers: {
       'x-rapidapi-host': 'hotels4.p.rapidapi.com',
       'x-rapidapi-key': config.key
@@ -43,16 +43,16 @@ const getDestinationId = async (cityName) =>{
 }
 
 
-const getHotelDetails = async (destinationId, checkInDate, checkOutDate, budget) =>{
-  console.log("inside getDestinationId city is " + cityName)
+const getHotelDetails = async (destinationId, apiCheckInDate, apiCheckOutDate, budget) =>{
+  console.log("inside getHotelDetails in hotelApi")
   let options = {
     method: 'GET',
-    url: 'https://hotels4.p.rapidapi.com/locations/v2/search',
+    url: 'https://hotels4.p.rapidapi.com/properties/list',
     params: { 
       destinationId: destinationId,
       pageNumber: "1",
-      checkIn: checkInDate, //"2020-01-12", -------------> User's checkin date
-      checkOut: checkOutDate,
+      checkIn: apiCheckInDate, //"2020-01-12", -------------> User's checkin date
+      checkOut: apiCheckOutDate,
       pageSize: "10",
       adults1: "1",
       currency: "USD",
@@ -69,10 +69,7 @@ const getHotelDetails = async (destinationId, checkInDate, checkOutDate, budget)
   };
 
   let response = axios.request(options).then(function (response) {    
-    console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
     console.log('hotel details api response ')
-    console.log(response)
-    console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
     return response;
   }).catch(function (error) {
     console.log("inside error ")
