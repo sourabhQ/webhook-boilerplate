@@ -30,6 +30,7 @@ const intentMapper = require("./intent-mapper");
 module.exports = async (req, res, next) => {
     try {
         const requestIntent = req.body.queryResult.intent.displayName;
+        console.log('intent name is ....'+ requestIntent+'....')
         let fulfillment = new dialogflowFullfillment(config.fullfillmentConfig, req.body);
         if (intentMapper[requestIntent]) {
             await intentMapper[requestIntent](fulfillment, req.body.queryResult);
